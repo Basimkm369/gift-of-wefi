@@ -218,17 +218,47 @@
 }
 
 @media (max-width: 640px) {
+  .page {
+    font-size: 0.92rem;
+  }
+
   .logo-row {
     justify-content: center;
+  }
+
+  .section-title h1,
+  .section-title h2 {
+    font-size: clamp(1.4rem, 6vw, 2rem);
+  }
+
+  .hero-quote {
+    font-size: 1rem;
+  }
+
+  .hero-copy {
+    font-size: 0.95rem;
+    line-height: 1.65;
+  }
+
+  .material-card h3 {
+    font-size: 0.98rem;
+  }
+
+  .card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .material-actions {
     flex-direction: column;
     align-items: stretch;
+    gap: 8px;
   }
 
   .btn {
     justify-content: center;
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 0.85rem;
   }
 }
 
