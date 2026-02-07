@@ -158,6 +158,8 @@
       let pdfjsLib = null
       let pendingPage = null
       let loadingTimer = null
+      const backCanvas = document.createElement('canvas')
+      const backCtx = backCanvas.getContext('2d')
 
       function setControls() {
         if (!pdfDoc) {
@@ -182,10 +184,15 @@
           const maxScale = window.innerWidth < 640 ? 1.2 : 1.6
           const scale = Math.min(containerWidth / viewport.width, maxScale)
           const scaledViewport = pdfPage.getViewport({ scale })
-          canvas.width = scaledViewport.width
-          canvas.height = scaledViewport.height
-          const renderContext = { canvasContext: ctx, viewport: scaledViewport }
-          return pdfPage.render(renderContext).promise
+          backCanvas.width = scaledViewport.width
+          backCanvas.height = scaledViewport.height
+          const renderContext = { canvasContext: backCtx, viewport: scaledViewport }
+          return pdfPage.render(renderContext).promise.then(() => {
+            canvas.width = backCanvas.width
+            canvas.height = backCanvas.height
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+            ctx.drawImage(backCanvas, 0, 0)
+          })
         }).finally(() => {
           isRendering = false
           pageLabel.textContent = pdfDoc ? `Page ${page} of ${pdfDoc.numPages}` : ''
