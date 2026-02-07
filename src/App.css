@@ -235,7 +235,7 @@
 .viewer-page {
   min-height: 100vh;
   height: 100vh;
-  --viewer-card-width: min(1600px, 100%);
+  --viewer-card-width: 100%;
   background:
     radial-gradient(circle at 10% 20%, rgba(15, 76, 129, 0.08), transparent 45%),
     radial-gradient(circle at 80% 10%, rgba(225, 29, 72, 0.09), transparent 50%),
@@ -272,6 +272,17 @@
   border-radius: 999px;
   cursor: pointer;
   box-shadow: 0 10px 22px rgba(15, 23, 42, 0.18);
+}
+
+.viewer-title {
+  font-weight: 700;
+  color: #123252;
+  font-size: clamp(0.9rem, 1.1vw, 1.05rem);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
 }
 
 
