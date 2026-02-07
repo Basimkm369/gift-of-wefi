@@ -235,7 +235,7 @@
 .viewer-page {
   min-height: 100vh;
   height: 100vh;
-  --viewer-card-width: min(1200px, 100%);
+  --viewer-card-width: min(1600px, 100%);
   background:
     radial-gradient(circle at 10% 20%, rgba(15, 76, 129, 0.08), transparent 45%),
     radial-gradient(circle at 80% 10%, rgba(225, 29, 72, 0.09), transparent 50%),
@@ -424,7 +424,7 @@
 .flipbook-page .react-pdf__Page__canvas {
   width: 100% !important;
   height: 100% !important;
-  object-fit: cover;
+  object-fit: contain;
   transform: scale(var(--page-zoom, 1));
   transform-origin: center center;
 }

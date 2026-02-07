@@ -25,7 +25,7 @@ function PDFFlipbook({ pdfUrl, fileName }) {
       setIsMobile(mobile)
 
       const containerWidth = containerRef.current.clientWidth
-      const targetPageWidth = containerWidth
+      const targetPageWidth = mobile ? containerWidth : Math.floor(containerWidth / 2)
       const reservedSpace = mobile ? 280 : 260
       const availableHeight = Math.max(window.innerHeight - reservedSpace, 360)
       const targetPageHeight = targetPageWidth * pageRatio
@@ -75,7 +75,7 @@ function PDFFlipbook({ pdfUrl, fileName }) {
 
   const pages = useMemo(() => {
     if (!numPages) return []
-    const pageZoom = isMobile ? 1.02 : 1.2
+    const pageZoom = 1
     return Array.from(new Array(numPages), (_, index) => (
       <div
         key={`page_${index + 1}`}
