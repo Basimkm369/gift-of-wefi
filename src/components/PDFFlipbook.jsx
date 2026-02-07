@@ -26,7 +26,7 @@ function PDFFlipbook({ pdfUrl, fileName }) {
 
       const containerWidth = containerRef.current.clientWidth
       const targetPageWidth = containerWidth
-      const reservedSpace = mobile ? 260 : 220
+      const reservedSpace = mobile ? 280 : 260
       const availableHeight = Math.max(window.innerHeight - reservedSpace, 360)
       const targetPageHeight = targetPageWidth * pageRatio
       const scale =
