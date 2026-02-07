@@ -11,7 +11,7 @@ function Materials({ subjects }) {
 
       <div className="card-grid">
         {subjects.map((subject) => (
-          <article key={subject.file} className="material-card">
+          <article key={subject.url} className="material-card">
             <div className="material-top">
               <div className="badge">PDF</div>
               <h3>{subject.file}</h3>
@@ -19,9 +19,7 @@ function Materials({ subjects }) {
             <div className="material-actions">
               <a
                 className="btn primary"
-                href={viewerUrl(subject.file)}
-                target="_blank"
-                rel="noreferrer"
+                href={viewerUrl(subject.url, subject.file)}
               >
                 Open Flipbook
               </a>
