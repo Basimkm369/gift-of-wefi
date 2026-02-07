@@ -25,13 +25,6 @@ function Materials({ subjects }) {
               >
                 Open Flipbook
               </a>
-              <a
-                className="btn ghost"
-                href={`/pdfs/${encodeURIComponent(subject.file)}`}
-                download
-              >
-                Download PDF
-              </a>
             </div>
           </article>
         ))}
