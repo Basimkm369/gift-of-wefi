@@ -247,6 +247,14 @@ body {
 }
 
 @media (max-width: 768px) {
+  body {
+    overflow-y: auto;
+  }
+
+  .pdf-viewer {
+    height: auto;
+  }
+
   .pdf-viewer {
     padding: 0 8px 8px;
     gap: 6px;
