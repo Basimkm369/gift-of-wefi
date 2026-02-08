@@ -1,9 +1,10 @@
-import PDFFlipbook from '../components/PDFFlipbook'
+import PDFFlipbook from '../components/PDFFlipbook';
 
 function Viewer({ fileUrl, title }) {
-  const decodedUrl = decodeURIComponent(fileUrl || '')
-  const decodedTitle = decodeURIComponent(title || '')
-  const displayTitle = decodedTitle || decodedUrl.split('/').pop() || 'Document'
+  const decodedUrl = decodeURIComponent(fileUrl || '');
+  const decodedTitle = decodeURIComponent(title || '');
+  const displayTitle =
+    decodedTitle || decodedUrl.split('/').pop() || 'Document';
 
   return (
     <div className="viewer-page">
@@ -12,7 +13,7 @@ function Viewer({ fileUrl, title }) {
           type="button"
           className="viewer-back"
           onClick={() => {
-            window.location.href = '/'
+            window.location.href = '/';
           }}
         >
           Back to Library
@@ -21,12 +22,9 @@ function Viewer({ fileUrl, title }) {
           {displayTitle}
         </div>
       </header>
-      <PDFFlipbook
-        pdfUrl={decodedUrl}
-        fileName={displayTitle}
-      />
+      <PDFFlipbook pdfUrl={decodedUrl} fileName={displayTitle} />
     </div>
-  )
+  );
 }
 
-export default Viewer
+export default Viewer;

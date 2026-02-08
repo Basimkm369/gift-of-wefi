@@ -1,81 +1,88 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { Document, Page, pdfjs } from 'react-pdf'
-import HTMLFlipBook from 'react-pageflip'
-import { IoIosArrowBack, IoIosArrowForward, IoLogoWhatsapp } from 'react-icons/io'
-import 'react-pdf/dist/Page/AnnotationLayer.css'
-import 'react-pdf/dist/Page/TextLayer.css'
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Document, Page, pdfjs } from 'react-pdf';
+import HTMLFlipBook from 'react-pageflip';
+import {
+  IoIosArrowBack,
+  IoIosArrowForward,
+  IoLogoWhatsapp,
+} from 'react-icons/io';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 function PDFFlipbook({ pdfUrl, fileName }) {
-  const [numPages, setNumPages] = useState(null)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [isMobile, setIsMobile] = useState(false)
-  const [bookWidth, setBookWidth] = useState(520)
-  const [bookHeight, setBookHeight] = useState(720)
-  const [pageRatio, setPageRatio] = useState(1.35)
-  const [isLoading, setIsLoading] = useState(true)
-  const containerRef = useRef(null)
-  const flipBookRef = useRef(null)
+  const [numPages, setNumPages] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isMobile, setIsMobile] = useState(false);
+  const [bookWidth, setBookWidth] = useState(520);
+  const [bookHeight, setBookHeight] = useState(720);
+  const [pageRatio, setPageRatio] = useState(1.35);
+  const [isLoading, setIsLoading] = useState(true);
+  const containerRef = useRef(null);
+  const flipBookRef = useRef(null);
 
   useEffect(() => {
     const handleResize = () => {
-      if (!containerRef.current) return
-      const mobile = containerRef.current.clientWidth < 768
-      setIsMobile(mobile)
+      if (!containerRef.current) return;
+      const mobile = containerRef.current.clientWidth < 768;
+      setIsMobile(mobile);
 
-      const containerWidth = containerRef.current.clientWidth
-      const targetPageWidth = mobile ? containerWidth : Math.floor(containerWidth / 2)
-      const reservedSpace = mobile ? 280 : 260
-      const availableHeight = Math.max(window.innerHeight - reservedSpace, 360)
-      const targetPageHeight = targetPageWidth * pageRatio
+      const containerWidth = containerRef.current.clientWidth;
+      const targetPageWidth = mobile
+        ? containerWidth
+        : Math.floor(containerWidth / 2);
+      const reservedSpace = mobile ? 280 : 260;
+      const availableHeight = Math.max(window.innerHeight - reservedSpace, 360);
+      const targetPageHeight = targetPageWidth * pageRatio;
       const scale =
         targetPageHeight > availableHeight
           ? availableHeight / targetPageHeight
-          : 1
+          : 1;
 
-      const newWidth = Math.floor(Math.max(targetPageWidth * scale, 320))
-      const newHeight = Math.round(newWidth * pageRatio)
-      setBookWidth(newWidth)
-      setBookHeight(newHeight)
-    }
+      const newWidth = Math.floor(Math.max(targetPageWidth * scale, 320));
+      const newHeight = Math.round(newWidth * pageRatio);
+      setBookWidth(newWidth);
+      setBookHeight(newHeight);
+    };
 
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [pageRatio])
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [pageRatio]);
 
   const onDocumentLoadSuccess = (pdf) => {
-    setNumPages(pdf.numPages)
+    setNumPages(pdf.numPages);
     pdf.getPage(1).then((page) => {
-      const viewport = page.getViewport({ scale: 1 })
-      const ratio = viewport.height / viewport.width
+      const viewport = page.getViewport({ scale: 1 });
+      const ratio = viewport.height / viewport.width;
       if (Number.isFinite(ratio) && ratio > 0) {
-        setPageRatio(ratio)
+        setPageRatio(ratio);
       }
-      setIsLoading(false)
-    })
-  }
+      setIsLoading(false);
+    });
+  };
 
   const goToPrevPage = () => {
     if (flipBookRef.current) {
-      flipBookRef.current.pageFlip().flipPrev()
+      flipBookRef.current.pageFlip().flipPrev();
     }
-  }
+  };
 
   const goToNextPage = () => {
     if (flipBookRef.current && numPages && currentPage < numPages) {
-      flipBookRef.current.pageFlip().flipNext()
+      flipBookRef.current.pageFlip().flipNext();
     }
-  }
+  };
 
-  const resolvedFileName = fileName || pdfUrl?.split('/').pop() || 'document.pdf'
-  const displayTitle = resolvedFileName.replace(/\.pdf$/i, '')
-  const totalPages = numPages || 0
+  const resolvedFileName =
+    fileName || pdfUrl?.split('/').pop() || 'document.pdf';
+  const displayTitle = resolvedFileName.replace(/\.pdf$/i, '');
+  const totalPages = numPages || 0;
 
   const pages = useMemo(() => {
-    if (!numPages) return []
-    const pageZoom = 1
+    if (!numPages) return [];
+    const pageZoom = 1;
     return Array.from(new Array(numPages), (_, index) => (
       <div
         key={`page_${index + 1}`}
@@ -91,8 +98,8 @@ function PDFFlipbook({ pdfUrl, fileName }) {
           />
         </div>
       </div>
-    ))
-  }, [bookWidth, isMobile, numPages])
+    ));
+  }, [bookWidth, isMobile, numPages]);
 
   return (
     <div className="flipbook-viewer" ref={containerRef}>
@@ -211,9 +218,8 @@ function PDFFlipbook({ pdfUrl, fileName }) {
           </a>
         </div>
       )}
-
     </div>
-  )
+  );
 }
 
-export default PDFFlipbook
+export default PDFFlipbook;

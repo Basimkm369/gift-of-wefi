@@ -1,35 +1,35 @@
-import { Suspense, lazy, useEffect, useState } from 'react'
-import Header from '../components/Header'
-import Hero from '../components/Hero'
-import Footer from '../components/Footer'
+import { Suspense, lazy, useEffect, useState } from 'react';
+import Header from '../components/Header';
+import Hero from '../components/Hero';
+import Footer from '../components/Footer';
 
-const Materials = lazy(() => import('../components/Materials'))
+const Materials = lazy(() => import('../components/Materials'));
 
 function Dashboard() {
-  const [subjects, setSubjects] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [subjects, setSubjects] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadPdfs = async () => {
       try {
-        const response = await fetch('/pdfs/index.json')
-        if (!response.ok) return
-        const files = await response.json()
-        if (!Array.isArray(files)) return
+        const response = await fetch('/pdfs/index.json');
+        if (!response.ok) return;
+        const files = await response.json();
+        if (!Array.isArray(files)) return;
         const mapped = files.map((file) => ({
           file,
           url: `/pdfs/${encodeURIComponent(file)}`,
-        }))
-        setSubjects(mapped)
+        }));
+        setSubjects(mapped);
       } catch (error) {
-        console.error('Failed to load PDF list', error)
+        console.error('Failed to load PDF list', error);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    loadPdfs()
-  }, [])
+    loadPdfs();
+  }, []);
 
   const skeletonCards = Array.from({ length: 6 }, (_, index) => (
     <article key={`skeleton_${index}`} className="material-card skeleton-card">
@@ -41,7 +41,7 @@ function Dashboard() {
         <div className="skeleton-button" />
       </div>
     </article>
-  ))
+  ));
 
   return (
     <div className="page">
@@ -76,7 +76,7 @@ function Dashboard() {
       </main>
       <Footer />
     </div>
-  )
+  );
 }
 
-export default Dashboard
+export default Dashboard;
