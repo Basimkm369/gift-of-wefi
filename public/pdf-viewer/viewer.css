@@ -276,11 +276,17 @@ body {
     padding: 8px 12px;
   }
 
+  .pdf-join svg {
+    width: 22px;
+    height: 22px;
+  }
+
   .pdf-controls {
     gap: 8px;
     flex-wrap: nowrap;
     flex-direction: column;
     padding-bottom: 6px;
+    margin-top: 2px;
   }
 
   .pdf-page-count {
@@ -297,8 +303,8 @@ body {
   .pdf-fullscreen {
     width: 36px;
     height: 36px;
-    top: 8px;
-    right: 8px;
+    top: 6px;
+    right: 6px;
     border-radius: 12px;
   }
 
