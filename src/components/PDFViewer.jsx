@@ -19,10 +19,13 @@ function PDFViewer({ pdfUrl, fileName }) {
   const [pageWidth, setPageWidth] = useState(0);
   const [pageHeight, setPageHeight] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [isPageRendering, setIsPageRendering] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isFlipping, setIsFlipping] = useState(false);
   const containerRef = useRef(null);
   const shellRef = useRef(null);
   const touchStartX = useRef(null);
+  const flipTimerRef = useRef(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -56,6 +59,14 @@ function PDFViewer({ pdfUrl, fileName }) {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (flipTimerRef.current) {
+        clearTimeout(flipTimerRef.current);
+      }
+    };
+  }, []);
+
   const onDocumentLoadSuccess = (pdf) => {
     setNumPages(pdf.numPages);
     setCurrentPage(1);
@@ -66,8 +77,15 @@ function PDFViewer({ pdfUrl, fileName }) {
         setPageRatio(ratio);
       }
       setIsLoading(false);
+      setIsPageRendering(false);
     });
   };
+
+  useEffect(() => {
+    if (!isLoading) {
+      setIsPageRendering(true);
+    }
+  }, [currentPage, isLoading]);
 
   const goToPrevPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -77,6 +95,18 @@ function PDFViewer({ pdfUrl, fileName }) {
     if (!numPages) return;
     setCurrentPage((prev) => Math.min(prev + 1, numPages));
   };
+
+  useEffect(() => {
+    if (!isLoading) {
+      setIsFlipping(true);
+      if (flipTimerRef.current) {
+        clearTimeout(flipTimerRef.current);
+      }
+      flipTimerRef.current = setTimeout(() => {
+        setIsFlipping(false);
+      }, 320);
+    }
+  }, [currentPage, isLoading]);
 
   const handleTouchStart = (event) => {
     touchStartX.current = event.touches[0].clientX;
@@ -119,10 +149,18 @@ function PDFViewer({ pdfUrl, fileName }) {
     fileName || pdfUrl?.split('/').pop() || 'document.pdf';
   const displayTitle = resolvedFileName.replace(/\.pdf$/i, '');
   const totalPages = numPages || 0;
+  const preloadPages = numPages
+    ? [currentPage - 1, currentPage + 1].filter(
+        (page) => page >= 1 && page <= numPages
+      )
+    : [];
 
   return (
     <div className="pdf-viewer">
-      <div className="pdf-shell" ref={shellRef}>
+      <div
+        className={`pdf-shell ${isFlipping ? 'is-flipping' : ''}`}
+        ref={shellRef}
+      >
         <button
           type="button"
           className="pdf-fullscreen"
@@ -132,7 +170,7 @@ function PDFViewer({ pdfUrl, fileName }) {
         >
           {isFullscreen ? <IoMdContract /> : <IoMdExpand />}
         </button>
-        {isLoading && (
+        {(isLoading || isPageRendering) && (
           <div className="pdf-loading">
             <div className="pdf-loading-inner">
               <svg
@@ -176,10 +214,26 @@ function PDFViewer({ pdfUrl, fileName }) {
                 pageNumber={currentPage}
                 width={pageWidth || undefined}
                 height={pageHeight || undefined}
+                onRenderSuccess={() => setIsPageRendering(false)}
+                onRenderError={() => setIsPageRendering(false)}
                 renderTextLayer={false}
                 renderAnnotationLayer={false}
               />
             </div>
+            {preloadPages.length > 0 && (
+              <div className="pdf-preload" aria-hidden="true">
+                {preloadPages.map((page) => (
+                  <Page
+                    key={`preload_${page}`}
+                    pageNumber={page}
+                    width={pageWidth || undefined}
+                    height={pageHeight || undefined}
+                    renderTextLayer={false}
+                    renderAnnotationLayer={false}
+                  />
+                ))}
+              </div>
+            )}
           </Document>
         </div>
       </div>

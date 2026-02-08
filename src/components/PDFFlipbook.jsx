@@ -22,9 +22,11 @@ function PDFFlipbook({ pdfUrl, fileName }) {
   const [pageRatio, setPageRatio] = useState(1.35);
   const [isLoading, setIsLoading] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isFlipping, setIsFlipping] = useState(false);
   const containerRef = useRef(null);
   const flipBookRef = useRef(null);
   const shellRef = useRef(null);
+  const flipTimerRef = useRef(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -58,6 +60,14 @@ function PDFFlipbook({ pdfUrl, fileName }) {
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     return () =>
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (flipTimerRef.current) {
+        clearTimeout(flipTimerRef.current);
+      }
+    };
   }, []);
 
   const onDocumentLoadSuccess = (pdf) => {
@@ -156,7 +166,9 @@ function PDFFlipbook({ pdfUrl, fileName }) {
 
       <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess}>
         <div
-          className={`flipbook-shell ${isLoading ? 'hidden' : ''}`}
+          className={`flipbook-shell ${isLoading ? 'hidden' : ''} ${
+            isFlipping ? 'is-flipping' : ''
+          }`}
           ref={shellRef}
         >
           <button
@@ -198,7 +210,16 @@ function PDFFlipbook({ pdfUrl, fileName }) {
               swipeDistance={10}
               showPageCorners={false}
               disableFlipByClick={false}
-              onFlip={(event) => setCurrentPage(event.data + 1)}
+              onFlip={(event) => {
+                setCurrentPage(event.data + 1);
+                setIsFlipping(true);
+                if (flipTimerRef.current) {
+                  clearTimeout(flipTimerRef.current);
+                }
+                flipTimerRef.current = setTimeout(() => {
+                  setIsFlipping(false);
+                }, 320);
+              }}
               ref={flipBookRef}
             >
               {pages}
