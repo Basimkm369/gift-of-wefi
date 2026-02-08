@@ -5,6 +5,8 @@ import {
   IoIosArrowBack,
   IoIosArrowForward,
   IoLogoWhatsapp,
+  IoMdContract,
+  IoMdExpand,
 } from 'react-icons/io';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
@@ -19,8 +21,10 @@ function PDFFlipbook({ pdfUrl, fileName }) {
   const [bookHeight, setBookHeight] = useState(720);
   const [pageRatio, setPageRatio] = useState(1.35);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const containerRef = useRef(null);
   const flipBookRef = useRef(null);
+  const shellRef = useRef(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -29,20 +33,15 @@ function PDFFlipbook({ pdfUrl, fileName }) {
       setIsMobile(mobile);
 
       const containerWidth = containerRef.current.clientWidth;
-      const targetPageWidth = mobile
-        ? containerWidth
-        : Math.floor(containerWidth / 2);
-      const reservedSpace = mobile ? 280 : 260;
-      const availableHeight = Math.max(window.innerHeight - reservedSpace, 360);
-      const targetPageHeight = targetPageWidth * pageRatio;
-      const scale =
-        targetPageHeight > availableHeight
-          ? availableHeight / targetPageHeight
-          : 1;
+      const reservedSpace = mobile ? 240 : 220;
+      const availableHeight = Math.max(window.innerHeight - reservedSpace, 420);
+      const maxWidth = Math.min(containerWidth, 1400);
 
-      const newWidth = Math.floor(Math.max(targetPageWidth * scale, 320));
-      const newHeight = Math.round(newWidth * pageRatio);
-      setBookWidth(newWidth);
+      const widthFromHeight = availableHeight / pageRatio;
+      const clampedWidth = Math.min(Math.max(widthFromHeight, 320), maxWidth);
+      const newHeight = Math.round(clampedWidth * pageRatio);
+
+      setBookWidth(Math.floor(clampedWidth));
       setBookHeight(newHeight);
     };
 
@@ -50,6 +49,16 @@ function PDFFlipbook({ pdfUrl, fileName }) {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [pageRatio]);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement));
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () =>
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
 
   const onDocumentLoadSuccess = (pdf) => {
     setNumPages(pdf.numPages);
@@ -73,6 +82,15 @@ function PDFFlipbook({ pdfUrl, fileName }) {
     if (flipBookRef.current && numPages && currentPage < numPages) {
       flipBookRef.current.pageFlip().flipNext();
     }
+  };
+
+  const toggleFullscreen = async () => {
+    if (!shellRef.current) return;
+    if (document.fullscreenElement) {
+      await document.exitFullscreen?.();
+      return;
+    }
+    await shellRef.current.requestFullscreen?.();
   };
 
   const resolvedFileName =
@@ -137,7 +155,19 @@ function PDFFlipbook({ pdfUrl, fileName }) {
       </div>
 
       <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess}>
-        <div className={`flipbook-shell ${isLoading ? 'hidden' : ''}`}>
+        <div
+          className={`flipbook-shell ${isLoading ? 'hidden' : ''}`}
+          ref={shellRef}
+        >
+          <button
+            type="button"
+            className="flipbook-fullscreen"
+            onClick={toggleFullscreen}
+            aria-label={isFullscreen ? 'Exit full screen' : 'View full screen'}
+            title={isFullscreen ? 'Exit full screen' : 'View full screen'}
+          >
+            {isFullscreen ? <IoMdContract /> : <IoMdExpand />}
+          </button>
           {currentPage === 1 && (
             <div className="flipbook-overlay flipbook-overlay-left">
               <span className="flipbook-overlay-kicker">Document</span>
@@ -157,7 +187,7 @@ function PDFFlipbook({ pdfUrl, fileName }) {
               startPage={0}
               size="fixed"
               flippingTime={500}
-              usePortrait
+              usePortrait={isFullscreen || isMobile}
               maxShadowOpacity={0.2}
               mobileScrollSupport
               autoSize

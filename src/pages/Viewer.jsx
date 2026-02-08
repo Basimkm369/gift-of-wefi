@@ -1,4 +1,4 @@
-import PDFFlipbook from '../components/PDFFlipbook';
+import PDFViewer from '../components/PDFViewer';
 
 function Viewer({ fileUrl, title }) {
   const decodedUrl = decodeURIComponent(fileUrl || '');
@@ -22,7 +22,7 @@ function Viewer({ fileUrl, title }) {
           {displayTitle}
         </div>
       </header>
-      <PDFFlipbook pdfUrl={decodedUrl} fileName={displayTitle} />
+      <PDFViewer pdfUrl={decodedUrl} fileName={displayTitle} />
     </div>
   );
 }
