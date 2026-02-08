@@ -1,0 +1,301 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  background: transparent;
+  color: #0f172a;
+  overflow: hidden;
+}
+
+.pdf-viewer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 0 6px 12px;
+  height: 100%;
+}
+
+.pdf-shell {
+  width: 100%;
+  max-width: 1200px;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  position: relative;
+  overflow: visible;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pdf-shell:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  max-width: none;
+  padding: 0;
+  background: #0b1220;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pdf-shell:fullscreen .pdf-stage {
+  height: 100%;
+}
+
+.pdf-shell.is-loading .pdf-stage {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.pdf-shell.is-loading .pdf-fullscreen {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pdf-stage {
+  min-height: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+}
+
+.pdf-page {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: left center;
+}
+
+.pdf-page canvas {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  display: block;
+  border-radius: 10px;
+}
+
+.pdf-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(2px);
+  z-index: 2;
+}
+
+.pdf-loading.hidden {
+  display: none;
+}
+
+.pdf-loading-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: #1f2937;
+  font-weight: 700;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 14px;
+  padding: 12px 18px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.15);
+  min-width: 200px;
+  justify-content: center;
+}
+
+.spinner {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 3px solid rgba(148, 163, 184, 0.4);
+  border-top-color: #ef4444;
+  animation: spin 0.9s linear infinite;
+}
+
+.pdf-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+}
+
+.pdf-btn {
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pdf-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pdf-page-count {
+  font-weight: 700;
+  color: #1d4ed8;
+  text-align: center;
+}
+
+.pdf-join-row {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.pdf-join {
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #0f172a;
+  background: white;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.1);
+  text-align: center;
+}
+
+.pdf-fullscreen {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 4;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border-radius: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: #ffffff;
+  color: #0f172a;
+  cursor: pointer;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+  position: absolute;
+}
+
+.pdf-fullscreen svg {
+  width: 18px;
+  height: 18px;
+}
+
+.pdf-tooltip {
+  position: absolute;
+  right: 50px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.pdf-fullscreen:hover .pdf-tooltip,
+.pdf-fullscreen:focus-visible .pdf-tooltip {
+  opacity: 1;
+  transform: translate(-4px, -50%);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .pdf-viewer {
+    padding: 0 8px 8px;
+    gap: 6px;
+  }
+
+  .pdf-stage {
+    min-height: 360px;
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  .pdf-btn {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+
+  .pdf-join {
+    font-size: 0.78rem;
+    padding: 8px 12px;
+  }
+
+  .pdf-controls {
+    gap: 8px;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    padding-bottom: 6px;
+  }
+
+  .pdf-page-count {
+    width: 100%;
+    text-align: center;
+    font-size: 0.8rem;
+  }
+
+  .pdf-btn {
+    width: 100%;
+    max-width: 180px;
+  }
+
+  .pdf-fullscreen {
+    width: 36px;
+    height: 36px;
+    top: 8px;
+    right: 8px;
+    border-radius: 12px;
+  }
+
+  .pdf-tooltip {
+    right: 44px;
+    font-size: 0.7rem;
+  }
+}

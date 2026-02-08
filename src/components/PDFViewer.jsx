@@ -7,6 +7,7 @@ import {
   IoMdExpand,
   IoLogoWhatsapp,
 } from 'react-icons/io';
+import { Tooltip } from 'react-tooltip';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 
@@ -166,10 +167,14 @@ function PDFViewer({ pdfUrl, fileName }) {
           className="pdf-fullscreen"
           onClick={toggleFullscreen}
           aria-label={isFullscreen ? 'Exit full screen' : 'View full screen'}
-          title={isFullscreen ? 'Exit full screen' : 'View full screen'}
+          data-tooltip-id="pdf-fullscreen-tip"
+          data-tooltip-content={
+            isFullscreen ? 'Exit full screen' : 'View full screen'
+          }
         >
           {isFullscreen ? <IoMdContract /> : <IoMdExpand />}
         </button>
+        <Tooltip id="pdf-fullscreen-tip" place="left" />
         {(isLoading || isPageRendering) && (
           <div className="pdf-loading">
             <div className="pdf-loading-inner">
